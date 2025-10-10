@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+<head>
+    <title>Добавить заявку - CRM System</title>
+    <th:block th:replace="~{fragments/header :: head}"></th:block>
+</head>
+<body>
+<nav th:replace="~{fragments/header :: navbar}"></nav>
+
+Updated form layout to match design with centered form and styled inputs
+<main class="container">
+    <div class="form-container">
+        <form th:action="@{/requests/add}" th:object="${request}" method="post">
+            <div class="mb-3">
+                <label for="userName" class="form-label">ФИО :</label>
+                <input type="text" class="form-control" id="userName"
+                       th:field="*{userName}" placeholder="ФИО :" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="courseName" class="form-label">Курс :</label>
+                <select class="form-select" id="courseName" th:field="*{courseName}" required>
+                    <option value="">Выберите курс</option>
+                    <option value="Java Standard Edition">Java Standard Edition</option>
+                    <option value="Web Technologies">Web Technologies</option>
+                    <option value="Python Programming Language">Python Programming Language</option>
+                    <option value="Java Pro">Java Pro</option>
+                    <option value="UX/UI Design">UX/UI Design</option>
+                    <option value="Django Framework">Django Framework</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="phone" class="form-label">Телефон :</label>
+                <input type="tel" class="form-control" id="phone"
+                       th:field="*{phone}" placeholder="+7/7___\___\____" required>
+            </div>
+
+            <div class="mb-4">
+                <label for="commentary" class="form-label">Комментарии :</label>
+                <textarea class="form-control" id="commentary" rows="4"
+                          th:field="*{commentary}"
+                          placeholder="Комментарии"></textarea>
+            </div>
+
+            <div>
+                <button type="submit" class="btn btn-success">Добавить заявку</button>
+            </div>
+        </form>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/header :: footer}"></footer>
+<div th:replace="~{fragments/header :: scripts}"></div>
+</body>
+</html>
