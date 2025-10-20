@@ -4,18 +4,35 @@
   <meta charset="UTF-8">
   <title>Requests</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
 
-<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #00796b;">
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark">
   <div class="container-fluid">
-    <a class="navbar-brand fw-bold text-white" href="/">CRM System</a>
-    <div class="collapse navbar-collapse">
-      <ul class="navbar-nav">
-        <li class="nav-item"><a class="nav-link text-white" href="/requests">All Requests</a></li>
-        <li class="nav-item"><a class="nav-link text-white" href="/requests?filter=new">New Requests</a></li>
-        <li class="nav-item"><a class="nav-link text-white" href="/requests?filter=handled">Processed Requests</a></li>
-        <li class="nav-item"><a class="nav-link text-white fw-bold" href="/add-request">+ Add Request</a></li>
+    <a class="navbar-brand" href="/"> CRM System</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link"
+             th:classappend="${(filter == null || filter == '') ? 'active-filter' : ''}"
+             href="/requests"> All Requests</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link"
+             th:classappend="${filter == 'new' ? 'active-filter' : ''}"
+             href="/requests?filter=new"> New Requests</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link"
+             th:classappend="${filter == 'handled' ? 'active-filter' : ''}"
+             href="/requests?filter=handled"> Processed Requests</a>
+        </li>
+        <li class="nav-item"><a class="nav-link" href="/add-request"> Add Request</a></li>
       </ul>
     </div>
   </div>
@@ -24,8 +41,8 @@
 <div class="container mt-5">
   <h2 class="text-center mb-4" th:text="${title}">All Requests</h2>
 
-  <table class="table table-bordered table-striped align-middle text-center shadow-sm">
-    <thead class="table-dark">
+  <table class="table table-striped align-middle text-center shadow-sm">
+    <thead>
     <tr>
       <th>ID</th>
       <th>Name</th>
@@ -42,13 +59,17 @@
       <td th:text="${req.phone}"></td>
       <td th:text="${req.course != null ? req.course.name : '—'}"></td>
       <td>
-                <span th:text="${req.handled ? 'Processed' : 'New'}"
-                      th:classappend="${req.handled ? 'text-success fw-bold' : 'text-warning fw-bold'}"></span>
+                <span th:if="${!req.handled}" class="status-badge status-new">
+                     New
+                </span>
+        <span th:if="${req.handled}" class="status-badge status-processed">
+                     Processed
+                </span>
       </td>
       <td>
-        <a th:href="@{'/requests/' + ${req.id}}" class="btn btn-sm btn-info">View</a>
-        <a th:if="${!req.handled}" th:href="@{'/assign/' + ${req.id}}" class="btn btn-sm btn-success">Process</a>
-        <span th:if="${req.handled}" class="text-muted">Done</span>
+        <a th:href="@{'/requests/' + ${req.id}}" class="btn btn-sm btn-info"> View</a>
+        <a th:if="${!req.handled}" th:href="@{'/assign/' + ${req.id}}" class="btn btn-sm btn-success"> Process</a>
+        <span th:if="${req.handled}" class="text-muted action-done"> Done</span>
       </td>
     </tr>
     </tbody>

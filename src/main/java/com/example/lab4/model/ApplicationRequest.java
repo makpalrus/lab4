@@ -1,33 +1,28 @@
 package com.example.lab4.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.util.List;
 
 @Entity
-@Table(name = "application_requests")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "application_requests")
 public class ApplicationRequest {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_name", nullable = false)
     private String userName;
-
-    @Column(name = "course_name", nullable = false)
-    private String courseName;
-
-    @Column(name = "commentary", length = 500)
     private String commentary;
-
-    @Column(name = "phone", nullable = false)
     private String phone;
+    private boolean handled;
 
-    @Column(name = "handled", nullable = false)
-    private Boolean handled = false;
+    @ManyToOne
+    private Courses course;
+
+    @ManyToMany
+    private List<Operators> operators;
 }

@@ -5,6 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CourseRepository extends JpaRepository<Courses, Long> {
-    // Здесь можно добавить кастомные методы, если понадобятся, но для начала хватит стандартных
+public interface CoursesRepository extends JpaRepository<Courses, Long> {
 }
