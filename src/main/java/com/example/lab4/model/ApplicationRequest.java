@@ -1,10 +1,8 @@
 package com.example.lab4.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -12,26 +10,21 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "application_requests")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class ApplicationRequest {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
-    @Column(name = "user_name", length = 200)
     private String userName;
-
-    @Column(name = "commentary", columnDefinition = "TEXT")
     private String commentary;
-
-    @Column(name = "phone", length = 100)
     private String phone;
-
-    @Column(name = "handled")
     private boolean handled;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
+    @JoinColumn(name = "course_id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "requests"})
     private Courses course;
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -40,6 +33,6 @@ public class ApplicationRequest {
             joinColumns = @JoinColumn(name = "request_id"),
             inverseJoinColumns = @JoinColumn(name = "operator_id")
     )
-    @JsonIgnore
-    private List<Operators> operators = new ArrayList<>();
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "requests"})
+    private List<Operators> operators;
 }

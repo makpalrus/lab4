@@ -1,6 +1,7 @@
-package com.example.lab4.controller;
+package com.example.lab4.api;
 
 import com.example.lab4.model.Courses;
+import com.example.lab4.repository.CoursesRepository;
 import com.example.lab4.service.CoursesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -10,35 +11,35 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/courses")
 @RequiredArgsConstructor
+@RequestMapping("/api/courses")
 public class CoursesRestController {
 
     private final CoursesService coursesService;
+    private final CoursesRepository coursesRepository;
 
     @GetMapping
-    public ResponseEntity<List<Courses>> getAllCourses() {
+    public ResponseEntity<?> getAllCourses() {
         List<Courses> courses = coursesService.getAllCourses();
         if (courses.isEmpty()) {
-            return ResponseEntity.noContent().build();
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return ResponseEntity.ok(courses);
     }
 
     @PostMapping
-    public ResponseEntity<Courses> addCourse(@RequestBody Courses course) {
-        Courses saved = coursesService.saveCourse(course);
+    public ResponseEntity<?> addCourse(@RequestBody Courses newCourse) {
+        Courses saved = coursesRepository.save(newCourse);
         return new ResponseEntity<>(saved, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteCourse(@PathVariable Long id) {
+    public ResponseEntity<?> deleteCourse(@PathVariable Long id) {
         Courses course = coursesService.getCourseById(id);
         if (course == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Курс с ID " + id + " не найден.");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        coursesService.deleteCourse(id);
-        return ResponseEntity.ok("Курс с ID " + id + " успешно удален.");
+        coursesRepository.deleteById(id);
+        return ResponseEntity.ok("Course deleted successfully");
     }
 }

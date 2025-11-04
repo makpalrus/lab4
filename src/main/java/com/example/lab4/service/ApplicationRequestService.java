@@ -6,9 +6,7 @@ import com.example.lab4.repository.ApplicationRequestRepository;
 import com.example.lab4.repository.OperatorsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,30 +34,21 @@ public class ApplicationRequestService {
     }
 
     public void addRequest(ApplicationRequest request) {
-        if (request.getOperators() == null) {
-            request.setOperators(new ArrayList<>());
+        if (request.getId() == null) {
+            request.setHandled(false);
         }
         requestRepository.save(request);
     }
 
-    @Transactional
-    public ApplicationRequest assignOperatorToRequest(Long requestId, Long operatorId) {
-        ApplicationRequest request = requestRepository.findById(requestId)
-                .orElseThrow(() -> new IllegalArgumentException("Заявка с ID " + requestId + " не найдена."));
-
-        Operators operator = operatorsRepository.findById(operatorId)
-                .orElseThrow(() -> new IllegalArgumentException("Оператор с ID " + operatorId + " не найден."));
-
-        if (request.getOperators() == null) {
-            request.setOperators(new ArrayList<>());
-        }
-
-        if (!request.getOperators().contains(operator)) {
-            request.getOperators().add(operator);
-        }
-
+    public boolean assignOperators(Long requestId, List<Long> operatorIds) {
+        Optional<ApplicationRequest> optionalRequest = requestRepository.findById(requestId);
+        if (optionalRequest.isEmpty()) return false;
+        ApplicationRequest request = optionalRequest.get();
+        List<Operators> operators = operatorsRepository.findAllById(operatorIds);
+        request.setOperators(operators);
         request.setHandled(true);
-        return requestRepository.save(request);
+        requestRepository.save(request);
+        return true;
     }
 
     public void deleteRequest(Long id) {

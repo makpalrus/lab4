@@ -1,10 +1,8 @@
 package com.example.lab4.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -12,23 +10,18 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "operators")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Operators {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
-    @Column(name = "name", length = 200)
     private String name;
-
-    @Column(name = "surname", length = 200)
     private String surname;
-
-    @Column(name = "department", length = 200)
     private String department;
 
     @ManyToMany(mappedBy = "operators", fetch = FetchType.LAZY)
-    @JsonIgnore
-    private List<ApplicationRequest> requests = new ArrayList<>();
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "operators"})
+    private List<ApplicationRequest> requests;
 }

@@ -1,4 +1,4 @@
-package com.example.lab4.controller;
+package com.example.lab4.api;
 
 import com.example.lab4.model.ApplicationRequest;
 import com.example.lab4.model.Operators;
@@ -10,38 +10,38 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/operators")
 @RequiredArgsConstructor
+@RequestMapping("/api/operators")
 public class OperatorsRestController {
 
     private final OperatorsService operatorsService;
-    private final ApplicationRequestService applicationRequestService;
+    private final ApplicationRequestService requestService;
 
     @GetMapping
-    public ResponseEntity<List<Operators>> getAllOperators() {
+    public ResponseEntity<?> getAllOperators() {
         List<Operators> operators = operatorsService.getAllOperators();
         if (operators.isEmpty()) {
-            return ResponseEntity.noContent().build();
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return ResponseEntity.ok(operators);
     }
 
     @PostMapping
-    public ResponseEntity<Operators> addOperator(@RequestBody Operators operator) {
+    public ResponseEntity<?> addOperator(@RequestBody Operators operator) {
         operatorsService.saveOperator(operator);
         return new ResponseEntity<>(operator, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{operatorId}/assign/{requestId}")
-    public ResponseEntity<ApplicationRequest> assignOperatorToRequest(
-            @PathVariable Long operatorId, @PathVariable Long requestId) {
-        try {
-            ApplicationRequest updatedRequest = applicationRequestService.assignOperatorToRequest(requestId, operatorId);
-            return ResponseEntity.ok(updatedRequest);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    @PutMapping("/{id}/assign/{requestId}")
+    public ResponseEntity<?> assignOperatorToRequest(@PathVariable Long id, @PathVariable Long requestId) {
+        boolean success = requestService.assignOperators(requestId, List.of(id));
+        if (!success) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        Optional<ApplicationRequest> updated = requestService.getRequestById(requestId);
+        return ResponseEntity.ok(updated.get());
     }
 }
